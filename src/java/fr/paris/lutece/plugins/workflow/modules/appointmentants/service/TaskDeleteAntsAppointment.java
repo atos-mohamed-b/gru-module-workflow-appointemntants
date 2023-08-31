@@ -95,7 +95,8 @@ public class TaskDeleteAntsAppointment extends SimpleTask
 
 		try
 		{
-			return deleteAntsAppointment( request, resourceHistory.getIdResource( ), this.getId( ) );
+			return _antsAppointmentService.deleteAntsAppointment( request, resourceHistory.getIdResource( ), this.getId( ) );
+			//return deleteAntsAppointment( request, resourceHistory.getIdResource( ), this.getId( ) );
 		}
 		catch ( Exception e )
 		{
@@ -144,7 +145,7 @@ public class TaskDeleteAntsAppointment extends SimpleTask
 							);
 					try {
 						// Delete the appointment from the ANTS database
-						return TaskAntsAppointmentService.deleteAntsAppointment( antsURL );
+						return TaskAntsAppointmentService.deleteAntsAppointmentRestCall( antsURL );
 					}
 					catch ( HttpAccessException h )
 					{

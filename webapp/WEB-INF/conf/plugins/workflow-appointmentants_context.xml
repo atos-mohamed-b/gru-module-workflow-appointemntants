@@ -42,6 +42,20 @@
 		class="fr.paris.lutece.plugins.workflow.modules.appointmentants.service.TaskDeleteAntsAppointment"
 		scope="prototype" />
 
+	<!-- Task UPDATE an appointment -->
+	<bean id="workflow-appointmentants.taskTaskUpdateAntsAppointment"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTaskUpdateAntsAppointment"
+		p:titleI18nKey="module.workflow.appointmentants.update_appointment.task_title"
+		p:beanName="workflow-appointmentants.taskUpdateAntsAppointment"
+		p:configBeanName="workflow-appointmentants.taskAntsAppointmentConfig"
+		p:configRequired="true" p:formTaskRequired="false"
+		p:taskForAutomaticAction="true" />
+
+	<bean id="workflow-appointmentants.taskUpdateAntsAppointment"
+		class="fr.paris.lutece.plugins.workflow.modules.appointmentants.service.TaskUpdateAntsAppointment"
+		scope="prototype" />
+
 	<!-- Tasks Config -->
 	<bean id="workflow-appointmentants.taskAntsAppointmentConfig"
 		class="fr.paris.lutece.plugins.workflow.modules.appointmentants.business.TaskAntsAppointmentConfig"
@@ -70,5 +84,11 @@
 	<bean id="workflow-appointmentants.taskDeleteAntsAppointmentComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.appointmentants.web.TaskDeleteAntsAppointmentComponent"
 		p:taskType-ref="workflow-appointmentants.taskTaskDeleteAntsAppointment"
+		p:taskConfigService-ref="workflow-appointmentants.taskAntsAppointmentConfigService" />
+		
+	<!-- Web component UPDATE an appointment -->
+	<bean id="workflow-appointmentants.taskUpdateAntsAppointmentComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.appointmentants.web.TaskUpdateAntsAppointmentComponent"
+		p:taskType-ref="workflow-appointmentants.taskTaskUpdateAntsAppointment"
 		p:taskConfigService-ref="workflow-appointmentants.taskAntsAppointmentConfigService" />
 </beans>

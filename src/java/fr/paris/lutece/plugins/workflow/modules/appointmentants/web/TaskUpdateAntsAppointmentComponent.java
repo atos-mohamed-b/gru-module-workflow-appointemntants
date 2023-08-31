@@ -31,17 +31,49 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.appointmentants.service;
+package fr.paris.lutece.plugins.workflow.modules.appointmentants.web;
 
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-public interface ITaskAntsAppointmentService {
-	
-	public boolean createAntsAppointment( HttpServletRequest request, int idAppointment, int idTask );
-	
-	public boolean deleteAntsAppointment( HttpServletRequest request, int idAppointment, int idTask );
+import fr.paris.lutece.plugins.workflow.modules.appointmentants.service.WorkflowAppointmentAntsPlugin;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
-	public boolean updateAntsAppointment( HttpServletRequest request, int idAppointment, int idTask );
+/**
+ * 
+ * Component used to handle the interface / visual aspect of the "Update ANTS appointment" task
+ *
+ */
+public class TaskUpdateAntsAppointmentComponent extends AbstractTaskAntsAppointmentComponent
+{
+	@Inject
+	@Named( WorkflowAppointmentAntsPlugin.BEAN_CONFIG )
+	private ITaskConfigService _config;
 
-	public int getAntsApplicationFieldName( int idTask );
+	private static final String PROPERTY_TASK_TITLE = "module.workflow.appointmentants.update_appointment.task_title";
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+	{
+		String taskTitle = I18nService.getLocalizedString( PROPERTY_TASK_TITLE, locale );
+
+		return getDisplayConfigForm( taskTitle, locale, task, _config );
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+        return doSaveConfig( request, task, _config );
+    }
 }
