@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -122,6 +123,8 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 	/**
 	 * Variables for general use
 	 */
+	private static final String APPLICATION_NUMBERS_SEPARATOR =
+			AppPropertiesService.getProperty( "ants.api.application.numbers.separator" );
 	public static final String KEY_URL = "url";
 	public static final String KEY_LOCATION = "location";
 	public static final String KEY_DATE = "date";
@@ -148,7 +151,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		{			
 			List<String> applicationNumberList = getAntsApplicationValues(
 					idAppointment,
-					getAntsApplicationFieldName( idTask )
+					getAntsApplicationFieldId( idTask )
 					);
 			
 			// If the appointment has no application number(s), then stop the task
@@ -207,7 +210,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 			// Retrieve the application number(s) from the current appointment
 			List<String> applicationNumberList = getAntsApplicationValues(
 					idAppointment,
-					getAntsApplicationFieldName( idTask )
+					getAntsApplicationFieldId( idTask )
 					);
 			
 			// If the appointment has no application number(s), then stop the task
@@ -564,22 +567,6 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		return responseObject.getRowcount( ) > 0;
 	}
 	
-	public static List<String> getAntsApplicationValues( int idAppointment, String title )
-	{
-		List<Response> responseList = AppointmentResponseService.findListResponse( idAppointment );
-
-		List<String> applicationValuesList = new ArrayList<>( );
-
-		for( Response response : responseList )
-		{
-			if( StringUtils.contains( response.getEntry( ).getTitle( ), title) )
-			{
-				applicationValuesList.add( response.getResponseValue( ) );
-			}
-		}
-		return applicationValuesList;
-	}
-	
 	public static List<String> getAntsApplicationValues( int idAppointment, int idEntry )
 	{
 		List<Response> responseList = AppointmentResponseService.findListResponse( idAppointment );
@@ -590,14 +577,26 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		{
 			if( response.getEntry( ).getIdEntry( ) == idEntry )
 			{
-				applicationValuesList.add( response.getResponseValue( ) );
+				String responseValue = response.getResponseValue( );
+				/* Check if the application numbers are in the same String, only separated by a specific character.
+				 * If they are not, then we consider that each number is saved in its own Response
+				 * */
+				if( StringUtils.contains( responseValue, APPLICATION_NUMBERS_SEPARATOR ) )
+				{
+					String[] appNumbersArray = StringUtils.split( responseValue, APPLICATION_NUMBERS_SEPARATOR ); 
+					return Arrays.asList( appNumbersArray );
+				}
+				else
+				{
+					applicationValuesList.add( response.getResponseValue( ) );
+				}
 			}
 		}
 		return applicationValuesList;
 	}
 	
 	@Override
-	public int getAntsApplicationFieldName( int idTask )
+	public int getAntsApplicationFieldId( int idTask )
 	{
 		return _task_ants_appointment_dao.load( idTask ).getIdFieldEntry( ) ;
 	}

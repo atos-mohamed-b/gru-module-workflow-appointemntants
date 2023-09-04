@@ -43,5 +43,5 @@ public interface ITaskAntsAppointmentService {
 
 	public boolean updateAntsAppointment( HttpServletRequest request, int idAppointment, int idTask );
 
-	public int getAntsApplicationFieldName( int idTask );
+	public int getAntsApplicationFieldId( int idTask );
 }
