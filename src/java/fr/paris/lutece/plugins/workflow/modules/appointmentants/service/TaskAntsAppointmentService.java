@@ -146,6 +146,8 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 
 		Map<String, String> applicationContent = getAppointmentData( request, idAppointment );
 
+		boolean isAppointmentCreated = false;
+		
 		// Only create the appointment in the ANTS DB if it was created by a user
 		if( isAppointmentCreatedInFrontOffice( appointment ) )
 		{			
@@ -157,7 +159,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 			// If the appointment has no application number(s), then stop the task
 			if( CollectionUtils.isEmpty( applicationNumberList ) )
 			{
-				return false;
+				return isAppointmentCreated;
 			}
 			
 			// Check if the application number used are valid and allow appointments creation
@@ -177,7 +179,12 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 							);
 					try {
 						// Create the appointment on the ANTS database
-						return addAntsAppointmentRestCall( antsURL );
+						isAppointmentCreated = addAntsAppointmentRestCall( antsURL );
+						
+						if( !isAppointmentCreated )
+						{
+							return isAppointmentCreated;
+						}
 					}
 					catch ( HttpAccessException h )
 					{
@@ -194,7 +201,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 				}
 			}
 		}
-		return false;
+		return isAppointmentCreated;
 	}
 
 	@Override
@@ -203,6 +210,8 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		Appointment appointment = AppointmentService.findAppointmentById( idAppointment );
 
 		Map<String, String> applicationContent = getAppointmentData( request, idAppointment );
+
+		boolean isAppointmentDeleted = false;
 
 		// Only execute the task if the appointment was created by a user
 		if( isAppointmentCreatedInFrontOffice( appointment ) )
@@ -216,7 +225,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 			// If the appointment has no application number(s), then stop the task
 			if( CollectionUtils.isEmpty( applicationNumberList ) )
 			{
-				return false;
+				return isAppointmentDeleted;
 			}
 			
 			// Check if the application numbers used are valid and still allow the appointments to be deleted
@@ -235,7 +244,12 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 							);
 					try {
 						// Delete the appointment from the ANTS database
-						return deleteAntsAppointmentRestCall( antsURL );
+						isAppointmentDeleted = deleteAntsAppointmentRestCall( antsURL );
+						
+						if( !isAppointmentDeleted )
+						{
+							return isAppointmentDeleted;
+						}
 					}
 					catch ( HttpAccessException h )
 					{
@@ -252,7 +266,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 				}
 			}
 		}
-		return false;
+		return isAppointmentDeleted;
 	}
 	
 	@Override
