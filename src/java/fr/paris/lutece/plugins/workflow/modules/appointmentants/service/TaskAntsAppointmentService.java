@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -135,6 +136,13 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 	public static final String ACTION_ADD = "add";
 	public static final String ACTION_DELETE = "delete";
 	
+	/**
+	 * Form ID variable to retrieve from the module-appointment-ants' properties file
+	 */
+	private static String FORM_ID_PATH = AppPropertiesService.getProperty( "ants.api.form.entryid.path" );
+	
+	private static int _formId;
+	
 	private TaskAntsAppointmentService( )
 	{
 	}
@@ -149,12 +157,17 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		boolean isAppointmentCreated = false;
 		
 		// Only create the appointment in the ANTS DB if it was created by a user
-		if( isAppointmentCreatedInFrontOffice( appointment ) )
-		{			
+		if( isAppointmentCreatedInFrontOffice( appointment ) && _formId != 0 )
+		{
 			List<String> applicationNumberList = getAntsApplicationValues(
 					idAppointment,
-					getAntsApplicationFieldId( idTask )
+					getApplicationNumbertEntryId( _formId )
 					);
+			
+			/*List<String> applicationNumberList = getAntsApplicationValues(
+					idAppointment,
+					getAntsApplicationFieldId( idTask )
+					);*/
 			
 			// If the appointment has no application number(s), then stop the task
 			if( CollectionUtils.isEmpty( applicationNumberList ) )
@@ -214,14 +227,20 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		boolean isAppointmentDeleted = false;
 
 		// Only execute the task if the appointment was created by a user
-		if( isAppointmentCreatedInFrontOffice( appointment ) )
+		if( isAppointmentCreatedInFrontOffice( appointment ) && _formId != 0 )
 		{
 			// Retrieve the application number(s) from the current appointment
 			List<String> applicationNumberList = getAntsApplicationValues(
 					idAppointment,
-					getAntsApplicationFieldId( idTask )
+					getApplicationNumbertEntryId( _formId )
 					);
 			
+			// Retrieve the application number(s) from the current appointment
+			/*List<String> applicationNumberList = getAntsApplicationValues(
+					idAppointment,
+					getAntsApplicationFieldId( idTask )
+					);
+			*/
 			// If the appointment has no application number(s), then stop the task
 			if( CollectionUtils.isEmpty( applicationNumberList ) )
 			{
@@ -353,7 +372,12 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		Map<String, String> appointmentDataMap = new HashMap<>( );
 
 		AppointmentDTO appointmentDto = AppointmentService.buildAppointmentDTOFromIdAppointment( idAppointment );
-
+		
+		// Get the ID of the Form this appointment was taken from
+		if( appointmentDto != null ) {
+			_formId = appointmentDto.getIdForm( );
+		}
+		
 		// Get the appointment's URL
 		appointmentDataMap.put(
 				KEY_URL,
@@ -586,7 +610,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		List<Response> responseList = AppointmentResponseService.findListResponse( idAppointment );
 
 		List<String> applicationValuesList = new ArrayList<>( );
-
+		
 		for( Response response : responseList )
 		{
 			if( response.getEntry( ).getIdEntry( ) == idEntry )
@@ -612,6 +636,12 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 	@Override
 	public int getAntsApplicationFieldId( int idTask )
 	{
-		return _task_ants_appointment_dao.load( idTask ).getIdFieldEntry( ) ;
+		return _task_ants_appointment_dao.load( idTask ).getIdFieldEntry( );
+	}
+
+	public int getApplicationNumbertEntryId( int idForm )
+	{	
+		// Get the field entry ID of the application number, for this specific form
+		return AppPropertiesService.getPropertyInt( FORM_ID_PATH + idForm, 0 );
 	}
 }
