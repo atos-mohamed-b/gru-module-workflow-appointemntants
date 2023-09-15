@@ -50,10 +50,10 @@ public class TaskAntsAppointmentConfigDAO implements ITaskConfigDAO<TaskAntsAppo
 	/**
 	 * SQL Queries
 	 */
-	private static final String SQL_QUERY_SELECT = "SELECT id_task, id_form, id_field_entry FROM workflow_task_ants_appointment WHERE id_task = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_ants_appointment ( id_task, id_form, id_field_entry ) VALUES ( ?, ?, ? ) ";
+	private static final String SQL_QUERY_SELECT = "SELECT id_task, id_form, field_entry_title FROM workflow_task_ants_appointment WHERE id_task = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_ants_appointment ( id_task, id_form, field_entry_title ) VALUES ( ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_ants_appointment WHERE id_task = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ants_appointment SET id_form = ?, id_field_entry = ? WHERE id_task = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ants_appointment SET id_form = ?, field_entry_title = ? WHERE id_task = ?";
 
     /**
      * {@inheritDoc}
@@ -66,7 +66,7 @@ public class TaskAntsAppointmentConfigDAO implements ITaskConfigDAO<TaskAntsAppo
             int nIndex = 0;
             daoUtil.setInt( ++nIndex, config.getIdTask( ) );
             daoUtil.setInt( ++nIndex, config.getIdForm() );
-            daoUtil.setInt( ++nIndex, config.getIdFieldEntry( ) );
+            daoUtil.setString( ++nIndex, config.getFieldEntryTitle( ) );
 
             daoUtil.executeUpdate( );
         }
@@ -92,7 +92,7 @@ public class TaskAntsAppointmentConfigDAO implements ITaskConfigDAO<TaskAntsAppo
 
                 taskAntsAppointmentConfig.setIdTask( daoUtil.getInt( ++nIndex ) );
                 taskAntsAppointmentConfig.setIdForm( daoUtil.getInt( ++nIndex ) );
-                taskAntsAppointmentConfig.setIdFieldEntry( daoUtil.getInt( ++nIndex ) );
+                taskAntsAppointmentConfig.setFieldEntryTitle( daoUtil.getString( ++nIndex ) );
             }
             
             return taskAntsAppointmentConfig;
@@ -109,7 +109,7 @@ public class TaskAntsAppointmentConfigDAO implements ITaskConfigDAO<TaskAntsAppo
         {
             int nIndex = 0;
             daoUtil.setInt( ++nIndex, config.getIdForm( ) );
-            daoUtil.setInt( ++nIndex, config.getIdFieldEntry( ) );
+            daoUtil.setString( ++nIndex, config.getFieldEntryTitle( ) );
             daoUtil.setInt( ++nIndex, config.getIdTask( ) );
             
             daoUtil.executeUpdate( );

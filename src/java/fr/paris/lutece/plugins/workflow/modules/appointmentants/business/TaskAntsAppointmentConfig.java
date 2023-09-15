@@ -39,7 +39,7 @@ public class TaskAntsAppointmentConfig extends TaskConfig {
 	
 	private int _nIdForm;
 
-	private int _nIdFieldEntry;
+	private String _strFieldEntryTitle;
 
 	public int getIdForm( )
 	{
@@ -51,13 +51,13 @@ public class TaskAntsAppointmentConfig extends TaskConfig {
 		this._nIdForm = formId;
 	}
 
-	public int getIdFieldEntry( )
+	public String getFieldEntryTitle( )
 	{
-		return _nIdFieldEntry;
+		return _strFieldEntryTitle;
 	}
 
-	public void setIdFieldEntry( int fieldEntryId )
+	public void setFieldEntryTitle( String fieldEntryTitle )
 	{
-		this._nIdFieldEntry = fieldEntryId;
+		this._strFieldEntryTitle = fieldEntryTitle;
 	}
 }

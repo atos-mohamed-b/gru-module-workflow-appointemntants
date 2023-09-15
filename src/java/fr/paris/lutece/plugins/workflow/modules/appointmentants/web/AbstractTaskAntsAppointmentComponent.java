@@ -73,7 +73,7 @@ public abstract class AbstractTaskAntsAppointmentComponent extends NoFormTaskCom
 
 	// PARAMETERS
 	private static final String PARAMETER_SELECT_FORM_ID = "id_form_selection";
-	public static final String PARAMETER_SELECT_FIELD_ID = "id_form_field_selection";
+	public static final String PARAMETER_SELECT_FIELD_ENTRY_TITLE = "field_entry_title_selection";
 	public static final String PARAMETER_SELECT_FORM = "selectForm";
 	private static final String JSP_MODIFY_TASK = "jsp/admin/plugins/workflow/ModifyTask.jsp";
 	private static final String PARAMETER_ID_TASK = "id_task";
@@ -132,7 +132,7 @@ public abstract class AbstractTaskAntsAppointmentComponent extends NoFormTaskCom
 	{
 		// Retrieve the values of the selected form and its entry 
 		String paramFormId = request.getParameter( PARAMETER_SELECT_FORM_ID );
-		String paramFieldId = request.getParameter( PARAMETER_SELECT_FIELD_ID );
+		String paramFieldEntryTitle = request.getParameter( PARAMETER_SELECT_FIELD_ENTRY_TITLE );
 		
 		String paramActionSelect = request.getParameter( PARAMETER_SELECT_FORM );
 
@@ -160,10 +160,10 @@ public abstract class AbstractTaskAntsAppointmentComponent extends NoFormTaskCom
 			bCreate = true;
 		}
 
-		// Set the selected form Entry in the config
-		if( StringUtils.isNotBlank( paramFieldId ) )
+		// Set the selected form Entry title in the config
+		if( StringUtils.isNotBlank( paramFieldEntryTitle ) )
 		{
-			config.setIdFieldEntry( NumberUtils.toInt( paramFieldId ) );
+			config.setFieldEntryTitle( paramFieldEntryTitle );
 		}
 		
 		// Set the selected form in the config
@@ -184,7 +184,7 @@ public abstract class AbstractTaskAntsAppointmentComponent extends NoFormTaskCom
 	
 	/**
 	 * Get a ReferenceList containing all the entries of the specified form. Each item of the ReferenceList
-	 * will contain the ID and the title of the entries
+	 * will contain the title value of the entries
 	 * 
 	 * @param idForm Id of the form to process
 	 * @return a ReferenceList Object with all the entries available in the form, or an empty ReferenceList
@@ -199,7 +199,7 @@ public abstract class AbstractTaskAntsAppointmentComponent extends NoFormTaskCom
 			ReferenceList entriesRefList = new ReferenceList( );
             for ( Entry entry : entriesList )
             {
-                entriesRefList.addItem( entry.getIdEntry( ), entry.getTitle( ) );
+                entriesRefList.addItem( entry.getTitle( ), entry.getTitle( ) );
             }
             return entriesRefList;
         }
