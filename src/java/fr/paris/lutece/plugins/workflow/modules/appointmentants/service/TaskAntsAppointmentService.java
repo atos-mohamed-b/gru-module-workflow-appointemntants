@@ -113,7 +113,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 	 */
 	private static final String PROPERTY_API_OPT_AUTH_TOKEN_VALUE =
 			AppPropertiesService.getProperty( TaskAntsAppointmentRestConstants.ANTS_TOKEN_VALUE );
-
+	
 	/**
 	 * Status value of an ANTS appointment ("validated", "consumed", etc.)
 	 */
@@ -125,6 +125,9 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 	 */
 	private static final String APPLICATION_NUMBERS_SEPARATOR =
 			AppPropertiesService.getProperty( "ants.api.application.numbers.separator" );
+	private static final String APPLICATION_NUMBERS_ENTRY_FIELD_TYPE =
+			AppPropertiesService.getProperty( "ants.api.application.numbers.entryFieldType" );
+	
 	public static final String KEY_URL = "url";
 	public static final String KEY_LOCATION = "location";
 	public static final String KEY_DATE = "date";
@@ -149,8 +152,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		if( isAppointmentCreatedInFrontOffice( appointment ) )
 		{			
 			List<String> applicationNumberList = getAntsApplicationValues(
-					idAppointment,
-					getAntsApplicationFieldId( idTask )
+					idAppointment
 					);
 			
 			// If the appointment has no application number(s), then stop the task
@@ -218,8 +220,7 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 		{
 			// Retrieve the application number(s) from the current appointment
 			List<String> applicationNumberList = getAntsApplicationValues(
-					idAppointment,
-					getAntsApplicationFieldId( idTask )
+					idAppointment
 					);
 			
 			// If the appointment has no application number(s), then stop the task
@@ -574,10 +575,9 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 	/**
 	 * Get the list of application numbers tied to an appointment
 	 * @param idAppointment ID of the appointment
-	 * @param idEntry ID of the entry containing the application numbers
 	 * @return a List of application numbers as strings
 	 */
-	public static List<String> getAntsApplicationValues( int idAppointment, int idEntry )
+	public static List<String> getAntsApplicationValues( int idAppointment )
 	{
 		List<Response> responseList = AppointmentResponseService.findListResponse( idAppointment );
 
@@ -585,7 +585,8 @@ public class TaskAntsAppointmentService implements ITaskAntsAppointmentService {
 
 		for( Response response : responseList )
 		{
-			if( response.getEntry( ).getIdEntry( ) == idEntry )
+			// If the response comes from an entry of the type 'Session', then we retrieve its value
+			if( StringUtils.equals( response.getEntry( ).getEntryType( ).getBeanName( ), APPLICATION_NUMBERS_ENTRY_FIELD_TYPE ) )
 			{
 				String responseValue = response.getResponseValue( );
 				
