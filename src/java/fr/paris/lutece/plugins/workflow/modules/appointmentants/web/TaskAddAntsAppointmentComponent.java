@@ -39,7 +39,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+
+import fr.paris.lutece.plugins.workflow.modules.appointmentants.business.history.TaskAntsAppointmentHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointmentants.service.WorkflowAppointmentAntsPlugin;
+import fr.paris.lutece.plugins.workflow.modules.appointmentants.service.history.ITaskAntsAppointmentHistoryService;
+import fr.paris.lutece.plugins.workflow.modules.appointmentants.service.history.TaskAntsAppointmentHistoryService;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -51,12 +57,31 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TaskAddAntsAppointmentComponent extends AbstractTaskAntsAppointmentComponent
 {
+	/**
+	 * Task's configuration service
+	 */
 	@Inject
 	@Named( WorkflowAppointmentAntsPlugin.BEAN_CONFIG )
 	private ITaskConfigService _config;
 
+	/**
+	 * Task's history service
+	 */
+	@Inject
+	@Named( TaskAntsAppointmentHistoryService.BEAN_SERVICE )
+	private ITaskAntsAppointmentHistoryService _antsAppointmentHistoryService;
+
+	/**
+	 * Task Title
+	 */
 	private static final String PROPERTY_TASK_TITLE = "module.workflow.appointmentants.add_appointment.task_title";
-	
+
+	/**
+	 * Task's history messages
+	 */
+	private static final String MESSAGE_TASK_APPOINTMENT_ADDED_SUCCESS = "module.workflow.appointmentants.add_appointment.message.appointmentCreationSuccess";
+	private static final String MESSAGE_TASK_APPOINTMENT_ADDED_FAILURE = "module.workflow.appointmentants.add_appointment.message.appointmentCreationFailure";
+
 	/**
      * {@inheritDoc}
      */
@@ -76,4 +101,27 @@ public class TaskAddAntsAppointmentComponent extends AbstractTaskAntsAppointment
     {
         return doSaveConfig( request, task, _config );
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+	{
+		// Retrieve the task's history
+		TaskAntsAppointmentHistory taskAppointmentHistory = _antsAppointmentHistoryService.findByPrimaryKey(
+				nIdHistory,
+				task.getId( ),
+				WorkflowUtils.getPlugin( ) );
+
+		// If the task has history data, display it in the appointment's history
+		if( taskAppointmentHistory != null )
+		{
+			return I18nService.getLocalizedString(
+					taskAppointmentHistory.isTaskSuccessful( ) ? MESSAGE_TASK_APPOINTMENT_ADDED_SUCCESS : MESSAGE_TASK_APPOINTMENT_ADDED_FAILURE,
+					locale );
+		}
+		// If the task has no history data, nothing will be displayed
+		return StringUtils.EMPTY;
+	}
 }
