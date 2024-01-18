@@ -56,10 +56,16 @@ public class TaskAntsAppointmentHistory
 	private boolean _bIsTaskSuccessful;
 
 	/**
+	 * ANTS application numbers used in the task
+	 */
+	private String _strAntsApplicationNumbers;
+
+	/**
 	 * Standard constructor
 	 */
 	public TaskAntsAppointmentHistory( )
 	{
+		_strAntsApplicationNumbers = null;
 	}
 
 	/**
@@ -71,12 +77,15 @@ public class TaskAntsAppointmentHistory
 	 *            Task's ID
 	 * @param taskSuccessState
 	 *            Task's success state: true = successful, false = failed
+	 * @param antsApplicationNumbers
+	 *            ANTS application numbers as a String
 	 */
-	public TaskAntsAppointmentHistory( int idResourceHistory, int idTask, boolean taskSuccessState )
+	public TaskAntsAppointmentHistory( int idResourceHistory, int idTask, boolean taskSuccessState, String antsApplicationNumbers )
 	{
 		_nIdResourceHistory = idResourceHistory;
 		_nIdTask = idTask;
 		_bIsTaskSuccessful = taskSuccessState;
+		_strAntsApplicationNumbers = antsApplicationNumbers;
 	}
 
 	/**
@@ -140,5 +149,24 @@ public class TaskAntsAppointmentHistory
 	public void setTaskSuccessState( boolean taskSuccessState )
 	{
 		_bIsTaskSuccessful = taskSuccessState;
+	}
+
+	/**
+	 * Get the ANTS application numbers used in this task
+	 * 
+	 * @return a String containing the application numbers' value
+	 */
+	public String getAntsApplicationNumbers( ) {
+		return _strAntsApplicationNumbers;
+	}
+
+	/**
+	 * Set the value of the ANTS application numbers
+	 * 
+	 * @param antsApplicationNumbers
+	 *            ANTS application numbers as a String
+	 */
+	public void setAntsApplicationNumbers( String antsApplicationNumbers ) {
+		_strAntsApplicationNumbers = antsApplicationNumbers;
 	}	
 }

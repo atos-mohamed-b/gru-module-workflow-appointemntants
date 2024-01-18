@@ -49,8 +49,8 @@ public class TaskAntsAppointmentHistoryDAO implements ITaskAntsAppointmentHistor
 	/**
 	 * SQL Queries
 	 */
-	private static final String SQL_QUERY_SELECT = "SELECT id_history, id_task, is_task_successful FROM workflow_task_ants_appointment_history WHERE id_history = ? AND id_task = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_ants_appointment_history ( id_history, id_task, is_task_successful ) VALUES ( ?, ?, ? )";
+	private static final String SQL_QUERY_SELECT = "SELECT id_history, id_task, is_task_successful, value_ants_application_numbers FROM workflow_task_ants_appointment_history WHERE id_history = ? AND id_task = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_ants_appointment_history ( id_history, id_task, is_task_successful, value_ants_application_numbers ) VALUES ( ?, ?, ?, ? )";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_ants_appointment_history WHERE id_history = ? AND id_task = ?";
     private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_ants_appointment_history WHERE id_task = ?";
 
@@ -66,6 +66,7 @@ public class TaskAntsAppointmentHistoryDAO implements ITaskAntsAppointmentHistor
             daoUtil.setInt( ++nIndex, history.getIdResourceHistory( ) );
             daoUtil.setInt( ++nIndex, history.getIdTask( ) );
             daoUtil.setBoolean( ++nIndex, history.isTaskSuccessful( ) );
+            daoUtil.setString( ++nIndex, history.getAntsApplicationNumbers( ) );
 
             daoUtil.executeUpdate( );
         }
@@ -94,6 +95,7 @@ public class TaskAntsAppointmentHistoryDAO implements ITaskAntsAppointmentHistor
                 taskAntsAppointmentHistory.setIdResourceHistory( daoUtil.getInt( ++nIndex ) );
                 taskAntsAppointmentHistory.setIdTask( daoUtil.getInt( ++nIndex ) );
                 taskAntsAppointmentHistory.setTaskSuccessState( daoUtil.getBoolean( ++nIndex ) );
+                taskAntsAppointmentHistory.setAntsApplicationNumbers( daoUtil.getString( ++nIndex ) );
             }
             return taskAntsAppointmentHistory;
         }

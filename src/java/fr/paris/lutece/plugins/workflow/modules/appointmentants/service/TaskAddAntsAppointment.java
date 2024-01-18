@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointmentants.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -40,6 +42,8 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.workflow.modules.appointmentants.business.history.TaskAntsAppointmentHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointmentants.service.history.ITaskAntsAppointmentHistoryService;
 import fr.paris.lutece.plugins.workflow.modules.appointmentants.service.history.TaskAntsAppointmentHistoryService;
@@ -103,30 +107,34 @@ public class TaskAddAntsAppointment extends SimpleTask
 		// Task's execution result
 		boolean isTaskResultPositive = false;
 
+		// Create the current task's history object
+		TaskAntsAppointmentHistory antsAppointmentHistory = new TaskAntsAppointmentHistory( );
+
 		try
 		{
-			isTaskResultPositive = _antsAppointmentService.createAntsAppointment( request, resourceHistory.getIdResource( ), this.getId( ) );
+			isTaskResultPositive = _antsAppointmentService.createAntsAppointment( request, resourceHistory.getIdResource( ), this.getId( ), antsAppointmentHistory );
 		}
 		catch ( Exception e )
 		{
 			AppLogService.error( CLASS_NAME, e );
 		}
 
-		createTaskHistory( nIdResourceHistory, isTaskResultPositive );
+		saveTaskHistory( antsAppointmentHistory, nIdResourceHistory, isTaskResultPositive );
 		return isTaskResultPositive;
 	}
 
 	/**
-	 * Create and save the current task's history in the database
+	 * Save the current task's history in the database
 	 * 
+	 * @param antsAppointmentHistory
+	 *            Instance of TaskAntsAppointmentHistory object to save
 	 * @param idResourceHistory
 	 *            ID of the resource history used for the task
 	 * @param isTaskSuccessful
 	 *            Boolean result returned by the task
 	 */
-	private void createTaskHistory( int idResourceHistory, boolean isTaskSuccessful )
+	private void saveTaskHistory( TaskAntsAppointmentHistory antsAppointmentHistory, int idResourceHistory, boolean isTaskSuccessful )
 	{
-		TaskAntsAppointmentHistory antsAppointmentHistory = new TaskAntsAppointmentHistory( );
 		antsAppointmentHistory.setIdResourceHistory( idResourceHistory );
 		antsAppointmentHistory.setIdTask( this.getId( ) );
 		antsAppointmentHistory.setTaskSuccessState( isTaskSuccessful );

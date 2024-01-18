@@ -103,30 +103,34 @@ public class TaskDeleteAntsAppointment extends SimpleTask
 		// Task's execution result
 		boolean isTaskResultPositive = false;
 
+		// Create the current task's history object
+		TaskAntsAppointmentHistory antsAppointmentHistory = new TaskAntsAppointmentHistory( );
+
 		try
 		{
-			isTaskResultPositive = _antsAppointmentService.deleteAntsAppointment( request, resourceHistory.getIdResource( ), this.getId( ) );
+			isTaskResultPositive = _antsAppointmentService.deleteAntsAppointment( request, resourceHistory.getIdResource( ), this.getId( ), antsAppointmentHistory );
 		}
 		catch ( Exception e )
 		{
 			AppLogService.error( CLASS_NAME, e );
 		}
 
-		createTaskHistory( nIdResourceHistory, isTaskResultPositive );
+		saveTaskHistory( antsAppointmentHistory, nIdResourceHistory, isTaskResultPositive );
 		return isTaskResultPositive;
 	}
 
 	/**
-	 * Create and save the current task's history in the database
+	 * Save the current task's history in the database
 	 * 
+	 * @param antsAppointmentHistory
+	 *            Instance of TaskAntsAppointmentHistory object to save
 	 * @param idResourceHistory
 	 *            ID of the resource history used for the task
 	 * @param isTaskSuccessful
 	 *            Boolean result returned by the task
 	 */
-	private void createTaskHistory( int idResourceHistory, boolean isTaskSuccessful )
+	private void saveTaskHistory( TaskAntsAppointmentHistory antsAppointmentHistory, int idResourceHistory, boolean isTaskSuccessful )
 	{
-		TaskAntsAppointmentHistory antsAppointmentHistory = new TaskAntsAppointmentHistory( );
 		antsAppointmentHistory.setIdResourceHistory( idResourceHistory );
 		antsAppointmentHistory.setIdTask( this.getId( ) );
 		antsAppointmentHistory.setTaskSuccessState( isTaskSuccessful );

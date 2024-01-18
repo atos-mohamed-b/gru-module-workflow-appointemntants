@@ -81,6 +81,7 @@ public class TaskDeleteAntsAppointmentComponent extends AbstractTaskAntsAppointm
 	 */
 	private static final String MESSAGE_TASK_APPOINTMENT_DELETED_SUCCESS = "module.workflow.appointmentants.delete_appointment.message.appointmentDeletionSuccess";
 	private static final String MESSAGE_TASK_APPOINTMENT_DELETED_FAILURE = "module.workflow.appointmentants.delete_appointment.message.appointmentDeletionFailure";
+	private static final String MESSAGE_TASK_APPOINTMENT_NO_ANTS_NUMBER = "module.workflow.appointmentants.ants_appointment.message.noAntsApplicationNumber";
 
 	/**
      * {@inheritDoc}
@@ -108,6 +109,7 @@ public class TaskDeleteAntsAppointmentComponent extends AbstractTaskAntsAppointm
 	@Override
 	public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
 	{
+		// Retrieve the task's history
 		TaskAntsAppointmentHistory taskAppointmentHistory = _antsAppointmentHistoryService.findByPrimaryKey(
 				nIdHistory,
 				task.getId( ),
@@ -116,8 +118,24 @@ public class TaskDeleteAntsAppointmentComponent extends AbstractTaskAntsAppointm
 		// If the task has history data, display it in the appointment's history
 		if( taskAppointmentHistory != null )
 		{
+			Object[] args = new Object[1];
+			// Get the ANTS application numbers to be displayed in the task's history
+			if( StringUtils.isNotBlank( taskAppointmentHistory.getAntsApplicationNumbers( ) ) )
+			{
+				args[0] = taskAppointmentHistory.getAntsApplicationNumbers( );
+			}
+			// If there are no ANTS application numbers, then display a specific message instead
+			else
+			{
+				args[0] = I18nService.getLocalizedString(
+						MESSAGE_TASK_APPOINTMENT_NO_ANTS_NUMBER,
+						locale );
+			}
+
+			// Return the message to be displayed in the task's history informations
 			return I18nService.getLocalizedString(
 					taskAppointmentHistory.isTaskSuccessful( ) ? MESSAGE_TASK_APPOINTMENT_DELETED_SUCCESS : MESSAGE_TASK_APPOINTMENT_DELETED_FAILURE,
+					args,
 					locale );
 		}
 		// If the task has no history data, nothing will be displayed
